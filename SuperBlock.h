@@ -1,12 +1,16 @@
 #ifndef SUPERBLOCK
 #define SUPERBLOCK
 
+#include "SuperBlock.h"
+
 typedef struct _SUPERBLOCK {
-	unsigned long long m_uInodeList[8]; //512bit(=64Byte) : inode list »ç¿ë¿©ºÎ ÀúÀå
-	unsigned long long m_uDataBlock[16]; //1024bit(=128Byte) : datablock »ç¿ë¿©ºÎ ÀúÀå
+	unsigned long long m_uInodeList[8]; //512bit(=64Byte) : inode list ì‚¬ìš©ì—¬ë¶€ ì €ìž¥
+	unsigned long long m_uDataBlock[16]; //1024bit(=128Byte) : datablock ì‚¬ìš©ì—¬ë¶€ ì €ìž¥
 }SSuperBlock;
 
 void InitializeSuperBlock(SSuperBlock* spSSuperBlock);
 SSuperBlock* MaskInodeList(SSuperBlock* spSSuperBlock, int iNum);
 SSuperBlock* MaskDataBlock(SSuperBlock* spSSuperBlock, int iNum);
+int SearchINode(SSuperBlock* spSuperBlock);
+int SearchDataBlock(SSuperBlock* spSuperBlock);
 #endif
