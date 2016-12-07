@@ -15,9 +15,14 @@ void InitializeInode(SINode* spINode) {
 	spINode->m_uMinute = 0;
 	spINode->m_uSecond = 0;
 	spINode->m_sDirect = 0;
-	spINode->m_sSingleIndirect = 0;
-	spINode->m_sDoubleIndirect = 0;
-	spINode->m_spNext = 0;
+	for (int i = 0; i < 102; ++i) {
+		spINode->m_sSingleIndirect[i] = 0;
+		for (int j = 0; j < 102; ++j) {
+			spINode->m_sDirect[i][j] = 0;
+		}
+	}
+	spINode->m_spChild = NULL;
+	spINode->m_spSibling = NULL;
 }
 
 SINode* CreateINode(const char* cFileName, bool bFileType) {
@@ -40,11 +45,33 @@ SINode* CreateINode(const char* cFileName, bool bFileType) {
 
 int SearchINode(SSuperBlock* spSuperBlock) {
 	unsigned long long uMask = 1;
+	int iCount = 1;
 	uMask <<= 63;
 	for (int i = 0; i < 8; ++i) {
-		for (int i = 0; i < 64; ++i) {
-			if(uMask &= spSuperBlock->m_)
+		for (int j = 0; j < 64; ++j) {
+			if (0==(uMask &= spSuperBlock->m_uInodeList[i])) {
+				return iCount;
+			}
+			else {
+				spSuperBlock->m_uInodeList[i] >>= 1;
+			}
 		}
 	}
+	return 0;
 }
-int SearchDataBlock(SSuperBlock* spSuperBlock);
+int SearchDataBlock(SSuperBlock* spSuperBlock) {
+	unsigned long long uMask = 1;
+	int iCount = 1;
+	uMask <<= 63;
+	for (int i = 0; i < 16; ++i) {
+		for (int j = 0; j < 64; ++j) {
+			if (0 == (uMask &= spSuperBlock->m_uInodeList[i])) {
+				return iCount;
+			}
+			else {
+				spSuperBlock->m_uInodeList[i] >>= 1;
+			}
+		}
+	}
+	return 0;
+}
