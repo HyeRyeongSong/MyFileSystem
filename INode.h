@@ -1,7 +1,7 @@
 #ifndef INODE
 #define INODE
 
-#define _CRT_SECURE_NO_WARNINGS //Áö¿ì±â
+#define _CRT_SECURE_NO_WARNINGS //ì§€ìš°ê¸°
 
 #include<stdbool.h>
 #include<string.h>
@@ -10,22 +10,28 @@
 #include "Define.h"
 
 typedef struct _INODE {
-	char m_cFileName[4];	//ÆÄÀÏ ÀÌ¸§ÀÇ ÃÖ´ë ±æÀÌ°¡ 4ÀÚ
-	unsigned m_uFileSize;	//data blockÀÌ °¢ 128 byte¾¿ ÃÑ 1024°³ ÀÖÀ¸¹Ç·Î ÃÖ´ë 2^17±îÁöÀÇ ¼ö Ç¥±â
-	unsigned m_uFileType : 1;	//µğ·ºÅÍ¸®¿Í ÀÏ¹İ ÆÄÀÏ 2°¡Áö Á¾·ùÀÇ ÆÄÀÏ ±¸ºĞ
-	unsigned m_uYear : 14;	//Àû¾îµµ 16,000(2^14)±îÁöÀÇ ³âµµ Ç¥±â
-	unsigned m_uMonth : 4;	//12¿ù(2^4)±îÁöÀÇ ³âµµ Ç¥±â
-	unsigned m_uDay : 5;	//31ÀÏ(2^5)±îÁöÀÇ ÀÏ Ç¥±â
-	unsigned m_uHour : 5;	//24½Ã(2^5)±îÁöÀÇ ½Ã°£ Ç¥±â
-	unsigned m_uMinute : 6;	//59ºĞ(2^6)±îÁöÀÇ ºĞ Ç¥±â
-	unsigned m_uSecond : 6;	//59ÃÊ(2^6)±îÁöÀÇ ÃÊ Ç¥±â
-	//data blockÀÌ ÃÑ 1024°³ÀÌ¹Ç·Î (0~2^10-1)ÀÇ ¼ö¸¦ Ç¥ÇöÇØ¾ß ÇÔ -> ÀÌ¸¦ ÃæÁ·ÇÏ¸ç Å©±â°¡ ÃÖ¼ÒÀÎ ÀÚ·áÇü shortÀ» »ç¿ë
+	char m_cFileName[4];	//íŒŒì¼ ì´ë¦„ì˜ ìµœëŒ€ ê¸¸ì´ê°€ 4ì
+	unsigned m_uFileSize;	//data blockì´ ê° 128 byteì”© ì´ 1024ê°œ ìˆìœ¼ë¯€ë¡œ ìµœëŒ€ 2^17ê¹Œì§€ì˜ ìˆ˜ í‘œê¸°
+	unsigned m_uFileType : 1;	//ë””ë ‰í„°ë¦¬ì™€ ì¼ë°˜ íŒŒì¼ 2ê°€ì§€ ì¢…ë¥˜ì˜ íŒŒì¼ êµ¬ë¶„
+	unsigned m_uYear : 14;	//ì ì–´ë„ 16,000(2^14)ê¹Œì§€ì˜ ë…„ë„ í‘œê¸°
+	unsigned m_uMonth : 4;	//12ì›”(2^4)ê¹Œì§€ì˜ ë…„ë„ í‘œê¸°
+	unsigned m_uDay : 5;	//31ì¼(2^5)ê¹Œì§€ì˜ ì¼ í‘œê¸°
+	unsigned m_uHour : 5;	//24ì‹œ(2^5)ê¹Œì§€ì˜ ì‹œê°„ í‘œê¸°
+	unsigned m_uMinute : 6;	//59ë¶„(2^6)ê¹Œì§€ì˜ ë¶„ í‘œê¸°
+	unsigned m_uSecond : 6;	//59ì´ˆ(2^6)ê¹Œì§€ì˜ ì´ˆ í‘œê¸°
+	//data blockì´ ì´ 1024ê°œì´ë¯€ë¡œ (0~2^10-1)ì˜ ìˆ˜ë¥¼ í‘œí˜„í•´ì•¼ í•¨ -> ì´ë¥¼ ì¶©ì¡±í•˜ë©° í¬ê¸°ê°€ ìµœì†Œì¸ ìë£Œí˜• shortì„ ì‚¬ìš©
 	short m_sDirect;		
-	short m_sSingleIndirect;
-	short m_sDoubleIndirect;
-	struct _INODE* m_spNext; //Inode List°¡ Linked ListÇüÅÂ
-
+	short m_sSingleIndirect[102]; // (128 / 8[í¬ì¸í„°])ì˜ ê°’ì´ 16ê°œì´ë¯€ë¡œ 16ê°œë§Œí¼ì˜ datablock ë²ˆí˜¸ ì €ì¥
+	short* m_sDoubleIndirect[102]; //16*16ë§Œí¼ì˜ datablockë²ˆí˜¸ ì €ì¥
+	struct _INODE* m_spChild; //ìì‹ data blcok ê°€ë¦¬í‚´
+	struct _INODE* m_spSibling; //í˜•ì œ data blcok ê°€ë¦¬í‚´
 }SINode;
+
+typedef struct _SINGLELINKEDLIST {
+	SINode *m_spHead;
+	SINode *m_spIterator; //ì´ë™ì„ ìœ„í•´
+	unsigned int m_iCount;
+}SSingleLinkedList;
 
 void InitializeInode(SINode* spINode);
 SINode* CreateINode(const char* cFileName, bool bFileType);
