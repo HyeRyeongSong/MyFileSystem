@@ -12,7 +12,7 @@ void InitializeFileSystem(SMyFileSystem* spMyFileSystem) {
 }
 SMyFileSystem* CreateFileSystem() {
 	FILE *file;
-	file = fopen("myfs.txt", "rb+");
+	file = fopen("myfs.bin", "rb+");
 	SMyFileSystem* spMyFileSystem = (SMyFileSystem*)calloc(1, sizeof(SMyFileSystem));
 	InitializeFileSystem(spMyFileSystem);
 	if(file != NULL){
@@ -20,10 +20,11 @@ SMyFileSystem* CreateFileSystem() {
 		return 0;
 	}
 	else {
-		SSuperBlock* spSSuperBlock;
-		spSSuperBlock = (SSuperBlock*)calloc(1, sizeof(SSuperBlock));
+		spMyFileSystem->m_sSuperBlock = (SSuperBlock*)calloc(1, sizeof(SSuperBlock));
+		*spMyFileSystem->m_spINode = (SINode*)calloc(MAX_NUM_OF_LIST, sizeof(SINode));
+		*spMyFileSystem->m_spDataBlock = (SDataBlock*)calloc(MAX_NUM_OF_DATABLOCK, sizeof(SDataBlock));
 		spMyFileSystem->m_spINode[1] = CreateINode("root", Directory);
-		MaskInodeList(spSSuperBlock, 1);
+		MaskInodeList(spMyFileSystem->m_sSuperBlock, 1);
 	}
 	return spMyFileSystem;
 }
