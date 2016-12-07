@@ -1,4 +1,5 @@
 #include "INode.h"
+#include "SuperBlock.h"
 
 
 void InitializeInode(SINode* spINode) {
@@ -35,5 +36,15 @@ SINode* CreateINode(const char* cFileName, bool bFileType) {
 	spNewINode->m_uSecond = t->tm_sec;
 
 	return spNewINode;
-
 }
+
+int SearchINode(SSuperBlock* spSuperBlock) {
+	unsigned long long uMask = 1;
+	uMask <<= 63;
+	for (int i = 0; i < 8; ++i) {
+		for (int i = 0; i < 64; ++i) {
+			if(uMask &= spSuperBlock->m_)
+		}
+	}
+}
+int SearchDataBlock(SSuperBlock* spSuperBlock);
