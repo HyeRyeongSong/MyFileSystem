@@ -8,6 +8,7 @@
 #include<stdlib.h>
 #include<time.h>
 #include "Define.h"
+#include "SuperBlock.h"
 
 typedef struct _INODE {
 	char m_cFileName[4];	//파일 이름의 최대 길이가 4자
