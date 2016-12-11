@@ -131,3 +131,32 @@ void PutData(SSingleLinkedList* spSLL, SINode* spCurrentINode, char* cData, SSup
 	}
 }
 
+void EraseFile(SINode* spINodeList[MAX_NUM_OF_LIST], SDataBlock* spDataBlock[MAX_NUM_OF_DATABLOCK], SDoubleLinkedList *spDLL, SSingleLinkedList *spSLL, char* cName, SSuperBlock* spSuperBlock) {
+	int iNumOfINode; //���� ������ inode number
+	SDataBlock* spBuffer = NULL;
+	for (int i = 0; i < MAX_NUM_OF_LIST; ++i) {
+		if (0 == strcmp(spINodeList[i]->m_cFileName, cName)) {
+			iNumOfINode = i;
+			break;
+		}
+	}
+	InitSLLIterator(spINodeList[iNumOfINode], spSLL);
+	while (spSLL->m_spIterator->m_spNext != NULL) {	//�ش� ���̳��忡 ������ ������ ������ �ϳ��� ������
+		spBuffer = spSLL->m_spIterator->m_spNext;
+		MaskDataBlockToZero(spSuperBlock, spSLL->m_spIterator->iNumOfDataBlock); //0���� ����ŷ
+		InitializeDataBlock(spSLL->m_spIterator);
+		spSLL->m_spIterator = spBuffer;
+	}
+	EraseINode(spDLL, cName, spINodeList);
+	MaskInodeListToZero(spSuperBlock, iNumOfINode);
+}
+void FreeDataBlock(SDataBlock *spDataBlock[MAX_NUM_OF_DATABLOCK]) {
+	for (int i = 0; i < MAX_NUM_OF_LIST; ++i) {
+		InitializeDataBlock(spDataBlock[i]);
+	}
+	free(spDataBlock);
+}
+
+void FreeSingleLinkedList(SSingleLinkedList* spSLL) {
+	free(spSLL);
+}
