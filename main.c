@@ -765,3 +765,97 @@ void MyShowFile(char * num1, char * num2, char * file, SINode * head, SMyFileSys
 	}
 	return;
 }
+
+void MyRemove(SMyFileSystem* spMyFileSystem, char* cName) {
+	EraseFile(spMyFileSystem->m_spINodeList, spMyFileSystem->m_spDataBlock, spMyFileSystem->spDLL, spMyFileSystem->spSLL, cName, spMyFileSystem->m_sSuperBlock);
+}
+
+void MyRemoveDirectory(SMyFileSystem* spMyFileSystem, char* cName) {
+	SINode* spCurrentINode;
+	spCurrentINode = spMyFileSystem->spDLL->m_spHead->m_spChild;
+
+
+	while (spCurrentINode->m_spNextSibling != NULL) {
+		if (0 == strcmp(spCurrentINode->m_cFileName, cName)) {
+			break;
+		}
+		spCurrentINode = spCurrentINode->m_spNextSibling;
+	}
+
+	if (spCurrentINode->m_spChild != NULL) {
+		printf("Directory not empty\n");
+		return;
+	}
+	else {
+		EraseFile(spMyFileSystem->m_spINodeList, spMyFileSystem->m_spDataBlock, spMyFileSystem->spDLL, spMyFileSystem->spSLL, cName, spMyFileSystem->m_sSuperBlock);
+	}
+}
+void MyShowINode(SMyFileSystem* spMyFileSystem, int iNumOfINode){
+	SINode* spPrintINode = spMyFileSystem->m_spINodeList[iNumOfINode];
+	/*파일 type출력*/
+	if(spPrintINode->m_uFileType == File){
+		printf("file type : regular file\n");
+	}
+	else{
+		printf("file type : directory file\n");
+	}
+	printf("file size : %u\n byte", spPrintINode->m_uFileSize);
+	printf("modified time : %u/ %u/ %u/ %02u:%02u: %02u\n", spPrintINode->m_uYear, spPrintINode->m_uMonth, spPrintINode->m_uDay
+	, spPrintINode->m_uHour, spPrintINode->m_uMinute, spPrintINode->m_uSecond);
+//	printf("data block list : %d %d %d\n", )
+}
+
+void MyShowBlock(SMyFileSystem* spMyFileSystem, int iNumOfDataBlock){
+	printf("%s\n", spMyFileSystem->m_spDataBlock[iNumOfDataBlock]->m_cData);
+}
+
+void MyState(SSuperBlock* spSuperBlock){
+	int iCountEmptyINode = 0;
+	int iCountEmptyDataBlock = 0;
+	for(int i=0; i<MAX_NUM_OF_LIST; ++i){
+		if(0!=SearchEmptyINode(spSuperBlock){
+			++iCountEmptyINode;
+	}
+	for(int i=0; i<MAX_NUM_OF_DATABLOCK; ++i){
+		if(0!=SearchEmptyDataBlock(spSuperBlock){
+			++iCountEmptyDataBlock;
+	}
+	printf("free inode : %d\n", iCountEmptyINode);
+	printf("free inode : %d\n", iCountEmptyDataBlock);
+}
+
+void MyMove(SMyFileSystem* spMyFileSystem, char* cName, SCommandLine* spCommandLine){
+	SINode *spDestINode; 
+	SINode *spCurrentINode;
+	spDestINode = SearchFileAddress(spMyFileSystem, spCommandLine->cp_Other[1], spMyFileSystem->spDLL->m_spHead);       //�ش� ���� ���� ����Ʈ �Լ�
+	for(int i=0; i<MAX_NUM_OF_LIST; ++i){
+		if(0==strcmp(spMyFileSystem->m_spINodeList[i]->m_cFileName, cName)){
+			spCurrentINode = spMyFileSystem->m_spINodeList[i];
+		}
+	}
+	strcpy(spDestINode->m_cFileName, spCurrentINode->m_cFileName);
+	spDestINode->m_iNumofINode = spCurrentINode->m_iNumofINode;
+	spDestINode->m_uFileSize = spCurrentINode->m_uFileSize;
+	spDestINode->m_uFileType = spCurrentINode->m_uFileType;
+	spDestINode->m_Direct = spCurrentINode->m_Direct;
+	for(int i=0; i<102; ++i){
+		spDestINode->m_sSingleIndirect[i] = spCurretnINode->m_sSingleIndirect[i];
+		for(int j=0; j<102; ++j){
+			spDestINode->m_sDoubleIndirect[i][j] = spCurrentINode->m_sDoubleIndirect[i][j];
+		}
+	}
+	spDestINode->m_spParent = spCurrentINode->m_spParent;
+	spDestINode->m_spChild = spCurrentINode->m_spChild;
+	spDestINode->m_spPrevSibling = spCurrentINode->m_spPrevSibling;
+	spDestINode->m_spNextSibling = spCurrentINode->m_spNextSibling;
+
+	struct tm *t;
+	time_t tTime = time(NULL);
+	t = localtime(&tTime);
+	spNewINode->m_uYear = t->tm_year + 1900;
+	spNewINode->m_uMonth = t->tm_mon + 1;
+	spNewINode->m_uDay = t->tm_mday;
+	spNewINode->m_uHour = t->tm_hour;
+	spNewINode->m_uMinute = t->tm_min;
+	spNewINode->m_uSecond = t->tm_sec;
+}
